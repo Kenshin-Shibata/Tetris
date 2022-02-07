@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const width = 10
     let nextRandom = 0
     let timerId
-
+    let score = 0
 
     //The Tetrominoes
     const lTetromino = [
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   //make the tetoromino down every secod
-  timerId = setInterval(moveDown, 1000)
+ // timerId = setInterval(moveDown, 1000)
 
 // assign function to keycondes
 function control(e) {
@@ -92,6 +92,8 @@ document.addEventListener('keyup', control)
     currentPosition += width
     draw()
     freeze()
+    addScore()
+    gameOver()
   }
 
   //freeze function
@@ -185,6 +187,32 @@ document.addEventListener('keyup', control)
     }
   })
 
+    // add Function
+    function addScore() {
+      for (let i = 0; i < 199; i += width) {
+        const row = [i, i+1, i+2, i+3, i+4, i+5, i+6, i+7, i+8, i+9]
 
+        if(row.every(index => squares[index].classList.contains('taken'))) {
+          score += 10
+          scoreDisplay.innerHTML = score
+          row.forEach(index => {
+            squares[index].classList.remove('taken')
+            squares[index].classList.remove('tetromino')
+          })
+          const squareRemoved = squares.slice(i, width)
+          squares = squareRemoved.concat(squares)
+          squares.forEach(cell => grid.appendChild(cell))
+        }
+      }
+    }
+
+    // game over
+    function gameOver() {
+      if(current.some(index => squares[currentPosition + index].classList.contains('taken'))){
+        scoreDisplay.innerHTML = 'end'
+        alert('GAME OVER')
+        clearInterval(timerId)
+      }
+    }
 
 })
